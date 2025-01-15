@@ -1,0 +1,31 @@
+// features
+* create multiple todo list
+* categorys for todo lists : lifestyle, fitness, health
+* notes in category
+* peek at cateogory lists - first 5 lists
+* peek at list - first 5 elements
+* randomize from a list
+* completed shown in highlighted green, default is orange
+* different themes
+
+
+{
+    "task": "hw",
+    "completed": false,
+    "description": "stuff",
+    "category": "school"
+}
+
+{
+    "task": "piano",
+    "completed": false,
+    "description": "music",
+    "category": "ec"
+}
+
+{
+    "task": "dishes",
+    "completed": true,
+    "description": "chores",
+    "category": "home"
+}
