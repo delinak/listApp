@@ -1,5 +1,4 @@
 const mongoose = require('mongoose');
-const connectDB = require('../config/db');
 
 const listSchema = new mongoose.Schema({
     name: {

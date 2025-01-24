@@ -1,5 +1,4 @@
 const mongoose = require('mongoose');
-const connectDB = require('../config/db');
 
 const collectionSchema = new mongoose.Schema({
     name: {
@@ -15,10 +14,6 @@ const collectionSchema = new mongoose.Schema({
         ref: 'List',
         default: [],
     }],
-    notes: {
-        type: String,
-        required: false,
-    },
-})
+});
 
-module.exports = mongoose.model('Collection', collectionSchema);
+module.exports = mongoose.model('ListCollection', collectionSchema);

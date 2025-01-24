@@ -1,6 +1,7 @@
 const express = require('express');
 const listRoutes = require('./routes/listRoutes');
 const entryRoutes = require('./routes/entryRoutes');
+const collectionRoutes = require('./routes/collectionRoutes');
 const connectDB = require('./config/db');
 const bodyParser = require('body-parser');
 
@@ -8,8 +9,10 @@ const app = express();
 
 app.use(express.json());
 app.use(bodyParser.json());
+
 app.use('/entry', entryRoutes);
 app.use('/list', listRoutes);
+app.use('/collection', collectionRoutes);
 
 connectDB();
 

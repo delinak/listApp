@@ -27,7 +27,7 @@ exports.updateList = async (req, res, next) => {
         const { name, description } = req.body;
 
         if(!listId){
-            return res.status(400).json({ status: false, message: "List Id is not buy"})
+            return res.status(400).json({ status: false, message: "List Id is not valid"})
         }
         // Filter out null/undefined fields to avoid unnecessary updates
         const updatedFields = {};
@@ -91,7 +91,7 @@ exports.getAllIncomplete = async(req,res,next) =>{
         }
         const entries = await ListService.getAllIncomplete(listId);
         if(!entries){
-            return res.status(404).json({status: false, message: 'Tasks not found'});
+            return res.status(404).json({status: false, message: 'List not found'});
         }
         res.json({status: true, sucess: entries});
     }catch(error){

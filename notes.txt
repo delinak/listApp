@@ -31,6 +31,11 @@
     "category": "home"
 }
 
+{
+    "name": "dishes",
+    "description": "chores"
+}
+
 1/14
 tested basic db operations for single tasks
 

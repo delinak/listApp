@@ -68,27 +68,23 @@ class ListService{
             }
     
             const tasks = toDelete.tasks;
-            console.log("Tasks associated with the list:", tasks); // Debug log
     
             // Ensure tasks are deleted
             if (tasks && tasks.length > 0) {
                 for (const taskId of tasks) {
-                    console.log(`Deleting task with ID: ${taskId}`);
                     await entryService.deleteEntry(taskId); // Delete each entry
-                    console.log(`Deleted task with ID: ${taskId}`);
                 }
             }
     
             // Delete the list itself
             await listModel.findByIdAndDelete(listId);
-            console.log(`Deleted list with ID: ${listId}`);
     
             return toDelete;
         } catch (error) {
-            console.error("Error deleting list:", error.message);
             throw new Error("Error deleting list: " + error.message);
         }
     }
+
     static async getAllIncomplete(listId){
         try{
             const listFound = await listModel.findById(listId).populate('tasks');
@@ -99,10 +95,9 @@ class ListService{
             const tasks = listFound.tasks;
 
             const incompleteTasks = tasks.filter(task => !task.completed);
-            console.log(incompleteTasks);
             return incompleteTasks;
         }catch(error){
-            throw new Error('Error fetching tasks' + error.message);
+            throw new Error('Error fetching list' + error.message);
         }
     }
 

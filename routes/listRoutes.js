@@ -1,6 +1,4 @@
 const listRoutes = require('express').Router();
-const List = require('../models/list.model');
-const Entry = require('../models/entry.model');
 const listController = require('../controller/listController');
 
 //create a new list
@@ -46,51 +44,5 @@ listRoutes.get('/getAllIncomplete/:listId', async (req, res, next) => {
         next(error); 
     }
 });
-
-
-// router.delete('/deleteCompleted', async (req, res, next) => {
-//     try {
-//         await todoController.deleteCompleted(req, res, next);
-//     } catch (error) {
-//         next(error); 
-//     }
-// });
-
-// router.get('/getAllNotCompleted', async (req, res, next) => {
-//     try {
-//         await todoController.getAllNotCompleted(req, res, next); 
-//     } catch (error) {
-//         next(error); 
-//     }
-// });
-
-//WHOLE LIST OPERATIONS
-
-// //get all tasks
-// router.get('/getAll', async (req, res, next) => {
-//     try {
-//         await todoController.getAll(req, res, next);
-//     } catch (error) {
-//         next(error);
-//     }
-// });
-
-// //complete all tasks
-// router.put('/completeAll', async (req, res, next) => {
-//     try {
-//         await todoController.completeAll(req, res, next); 
-//     } catch (error) {
-//         next(error); 
-//     }
-// });
-
-// //delete all tasks
-// router.delete('/deleteAll', async (req, res, next) => {
-//     try {
-//         await todoController.deleteAll(req, res, next); 
-//     } catch (error) {
-//         next(error); 
-//     }
-// });
 
 module.exports = listRoutes;
