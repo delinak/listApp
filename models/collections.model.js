@@ -1,23 +1,24 @@
 const mongoose = require('mongoose');
 const connectDB = require('../config/db');
 
-const todoSchema = new mongoose.Schema({
-    task: {
+const collectionSchema = new mongoose.Schema({
+    name: {
         type: String,
         required: true,
-    },
-    completed: {
-        type: Boolean,
-        default: false,
     },
     description: {
         type: String,
         required: false,
     },
-    category: {
+    lists: [{
+        type : mongoose.Schema.Types.ObjectId,
+        ref: 'List',
+        default: [],
+    }],
+    notes: {
         type: String,
         required: false,
-    }
-});
+    },
+})
 
-module.exports = mongoose.model('Todo', todoSchema);
+module.exports = mongoose.model('Collection', collectionSchema);
