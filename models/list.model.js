@@ -5,20 +5,32 @@ const listSchema = new mongoose.Schema({
         type: String,
         required: true,
     },
-    description:{
+    description: {
         type: String,
-        required: false
+        required: false,
     },
-    tasks: [{ 
-        type: mongoose.Schema.Types.ObjectId, 
+    createdAt: {
+        type: Date,
+        default: Date.now,
+    },
+    resetCycle: {
+        type: String,
+        enum: ['none', 'daily', 'weekly', 'monthly'],
+        default: 'none'
+    },
+    lastReset: {
+        type: Date,
+        default: Date.now,
+    },
+    entries: [{
+        type: mongoose.Schema.Types.ObjectId,
         ref: 'Entry',
         default: [],
     }],
-    listCollection: {
+    tags: [{
         type: mongoose.Schema.Types.ObjectId,
-        ref: 'Collection',
-        required: false,
-    },
+        ref: 'Tag',
+    }]
 });
 
 module.exports = mongoose.model('List', listSchema);

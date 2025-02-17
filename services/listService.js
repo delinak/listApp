@@ -3,20 +3,12 @@ const entryModel = require('../models/entry.model');
 const entryService = require('../services/entryService');
 
 class ListService{
-    static async createList(entryData){
-        try{
-            const newList = new listModel(entryData);
-            if(entryData.listCollection){
-                const collection = await Collection.findById(entryData.listCollection);
-                if(!collection){
-                    throw new Error('Collection not foud');
-                }
-                collection.lists.push(newList._id);
-                await collection.save();
-            }            
+    static async createList(listData) {
+        try {
+            const newList = new listModel(listData);
             return await newList.save();
-        }catch(error){
-            throw new Error('Error adding list:' + error.message);
+        } catch (error) {
+            throw new Error(`Error creating list: ${error.message}`);
         }
     }
 
@@ -101,6 +93,99 @@ class ListService{
         }
     }
 
+    static async getFilteredEntries(listId, filter = {}) {
+        try {
+            const list = await listModel.findById(listId).populate('entries');
+            if (!list) {
+                throw new Error("List not found");
+            }
+
+            let entries = list.entries;
+            
+            if (filter.completed !== undefined) {
+                entries = entries.filter(entry => entry.completed === filter.completed);
+            }
+
+            return entries;
+        } catch (error) {
+            throw new Error(`Error filtering entries: ${error.message}`);
+        }
+    }
+
+    static async getIncompleteEntries(listId) {
+        try {
+            const list = await listModel.findById(listId).populate('entries');
+            if (!list) {
+                throw new Error("List not found");
+            }
+
+            // Filter for incomplete entries
+            const incompleteEntries = list.entries.filter(entry => !entry.completed);
+            return incompleteEntries;
+        } catch (error) {
+            throw new Error(`Error getting incomplete entries: ${error.message}`);
+        }
+    }
+
+    static async getRandomEntry(listId, onlyIncomplete = false) {
+        try {
+            const list = await listModel.findById(listId).populate('entries');
+            if (!list || !list.entries.length) {
+                throw new Error("No entries found in list");
+            }
+
+            let eligibleEntries = list.entries;
+            if (onlyIncomplete) {
+                eligibleEntries = list.entries.filter(entry => !entry.completed);
+                if (eligibleEntries.length === 0) {
+                    throw new Error("No incomplete entries found in list");
+                }
+            }
+
+            const randomIndex = Math.floor(Math.random() * eligibleEntries.length);
+            return eligibleEntries[randomIndex];
+        } catch (error) {
+            throw new Error(`Error getting random entry: ${error.message}`);
+        }
+    }
+
+    static async resetListEntries(listId) {
+        try {
+            const list = await listModel.findById(listId);
+            if (!list) {
+                throw new Error("List not found");
+            }
+
+            // Reset all entries to incomplete
+            await entryModel.updateMany(
+                { list: listId },
+                { completed: false }
+            );
+
+            list.lastReset = new Date();
+            await list.save();
+
+            return list;
+        } catch (error) {
+            throw new Error(`Error resetting list: ${error.message}`);
+        }
+    }
+
+    static async addTag(listId, tagId) {
+        try {
+            const list = await listModel.findByIdAndUpdate(
+                listId,
+                { $addToSet: { tags: tagId } },
+                { new: true }
+            );
+            if (!list) {
+                throw new Error("List not found");
+            }
+            return list;
+        } catch (error) {
+            throw new Error(`Error adding tag: ${error.message}`);
+        }
+    }
 }
 
 module.exports = ListService;

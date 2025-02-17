@@ -15,10 +15,10 @@ class EntryService{
             if (entryData.list) { 
                 const foundList = await listModel.findById(entryData.list);
                 if (!foundList) {
-                    throw new Error('Entry not found');
+                    throw new Error('List not found');
                 }
     
-                foundList.tasks.push(newEntry._id);
+                foundList.entries.push(newEntry._id);
                 await foundList.save(); 
             }
             console.log(newEntry);
@@ -30,32 +30,20 @@ class EntryService{
 
     static async updateEntry(entryId, updatedFields) {
         try {
-            const existingEntry = await entryModel.findById(entryId);
-            if(!existingEntry){
+            updatedFields.updatedAt = new Date();
+            const updatedEntry = await entryModel.findByIdAndUpdate(
+                entryId,
+                updatedFields,
+                { new: true }
+            );
+            
+            if (!updatedEntry) {
                 throw new Error("Entry not found");
             }
 
-            if(updatedFields.list !== undefined){
-                if(existingEntry.list){
-                    const oldList = await listModel.findById(existingEntry.list);
-                    if(oldList){
-                        oldList.tasks.pull(entryId);
-                        await oldList.save();
-                    }
-                }
-    
-                const newList = await listModel.findById(updatedFields.list);
-                if( !newList){
-                    throw new Error("NewList not found");
-                }
-                newList.tasks.push(entryId);
-                await newList.save();
-            }
-
-            const updatedEntry = await entryModel.findByIdAndUpdate(entryId, updatedFields, { new: true });
-            return updatedEntry; // Return the updated document or null if not found
+            return updatedEntry;
         } catch (error) {
-            throw new Error("Error updating task: " + error.message);
+            throw new Error(`Error updating entry: ${error.message}`);
         }
     }
 
@@ -73,25 +61,35 @@ class EntryService{
 
     static async getEntry(entryId){
         try{
-            const todo = await entryModel.findById(entryId);
-            if(!todo){
-                throw new Error("Task not found");
+            const entry = await entryModel.findById(entryId);
+            if(!entry){
+                throw new Error("Entry not found");
             }
-            return todo;
+            return entry;
         }catch(error){
-            throw new Error('Error fetching task' + error.message);
+            throw new Error(`Error fetching entry: ${error.message}`);
         }
     }
 
     static async deleteEntry(entryId){
-        try{
-            const toDelete = await entryModel.deleteOne({ _id: entryId });
-        if(!toDelete){
-            throw new Error("Task not found");
-        }
-        return toDelete;
-        }catch(error){
-            throw new Error('Error fetching task' + error.message);
+        try {
+            const entry = await entryModel.findById(entryId);
+            if (!entry) {
+                throw new Error("Entry not found");
+            }
+
+            // Remove entry from its list if it belongs to one
+            if (entry.list) {
+                await listModel.findByIdAndUpdate(
+                    entry.list,
+                    { $pull: { entries: entryId } }
+                );
+            }
+
+            await entryModel.findByIdAndDelete(entryId);
+            return entry;
+        } catch (error) {
+            throw new Error(`Error deleting entry: ${error.message}`);
         }
     }
 }

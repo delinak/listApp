@@ -4,6 +4,7 @@ const entryRoutes = require('./routes/entryRoutes');
 const collectionRoutes = require('./routes/collectionRoutes');
 const connectDB = require('./config/db');
 const bodyParser = require('body-parser');
+require('./utils/scheduledTasks');
 
 const app = express();
 
